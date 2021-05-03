@@ -1,34 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Poke Trader
 
-## Getting Started
+## Requisitos
+- Permitir que o jogador monte uma troca combinando pokemons dos dois lados
+  - Buscar Pokemons a partir do nome
+  - Adicionar na lista de comparação
+  - Criar posições do Jogador 1 e Jogador 2
+- O sistema o informe se a mesma é justa ou não
+  - Exibir resultado
+- Permitir persistir e visualizar o histórico de trocas registradas junto com seus dados
+relevantes
+  - Armazenar trocas (data, pokemons, justa/não justa)
+  - Listar trocas
 
-First, run the development server:
+## Rodar o projeto
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+### Requisitos
+- Necessário ter o [NodeJS](https://nodejs.org/en/download/) instalado
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Rodando o projeto
+- Clone este repositório
+- Acesse a pasta do projeto e rode `npm install`
+- Aguarde a instalação dos pacotes
+- Rode `npm run dev`
+- Acesse [http://localhost:3000](http://localhost:**3000**)
