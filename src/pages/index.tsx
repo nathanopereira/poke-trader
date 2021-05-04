@@ -168,11 +168,13 @@ const Home: React.FC = () => {
           </div>
         </div>
         <div className="col-12 col-md-3">
-          <div className={`card text-center card-body h-100 d-flex alert ${currentTradeIsFair ? 'alert-success' : 'alert-warning'}`}>
+          <div className={`card text-center card-body h-100 d-flex alert ${
+            (pokemonsPlayer1.length > 0 && pokemonsPlayer2.length > 0) ? currentTradeIsFair ? 'alert-success' : 'alert-warning' : 'alert-secondary'
+            }`}>
             <div className="my-auto">
               <p className="m-0">Resumo da troca</p>
               {pokemonsPlayer1.length === 0 || pokemonsPlayer2.length === 0 ? (
-                <p>Os jogadores precisam selecionar pokémons</p>
+                <strong>Selecione pokémons para ver o resumo da troca</strong>
               ) : (
                 <>
                   <h1 className="mb-4">
