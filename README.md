@@ -6,7 +6,9 @@
 [https://poke-trader.vercel.app/](https://poke-trader.vercel.app/)
 
 ## Resumo
-Poke Trader é uma calculadora de trocas de pokémons. Ela permite calcular se uma troca é justa ou não a partir da soma da experiência base (base_experience) dos pokémons dos jogadores. Também permite armazenar as trocas calculadas.
+Poke Trader é uma calculadora de trocas de pokémons que permite calcular se uma troca entre jogadores é justa ou não a partir da soma e comparação da experiência base (base_experience) dos pokémons dos jogadores. Também permite armazenar e consultar o histórico de trocas calculadas.
+
+Desenvolvida utilizando a API [https://pokeapi.co/docs/v2](https://pokeapi.co/docs/v2).
 
 ### Troca Justa
 Uma troca é considerada justa se a soma da experiência base dos pokémons não exceder **10 pontos** de diferença dos pokémons do outro jogador.
