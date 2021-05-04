@@ -2,7 +2,9 @@ import axios from 'axios';
 import React, { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
 import { format, parseISO } from 'date-fns';
-import Link from 'next/link';
+import Head from 'next/head';
+
+import PokemonSelector from '@/components/PokemonSelector'
 
 interface ITrade {
   _id: string;
@@ -131,96 +133,76 @@ const Home: React.FC = () => {
   }, [])
 
   return (
-    <main className="container">
+    <main className="container-fluid" style={{ maxWidth: 1400 }}>
+      <Head>
+        <title>Poke Trader | Nathan Souza</title>
+      </Head>
       <div className="row">
-        <div className="col-12 mt-3 mb-4"><h1 className="text-center">Poke Trader</h1></div>
+        <div className="col-12 mt-3 mb-2 text-center">
+          <h1>Poke Trader</h1>
+          <p>Calcule se uma troca de pokémons é justa ou não</p>
+        </div>
       </div>
 
-      <div className="row">
-        <form className="col-12 col-md-8" onSubmit={handleDoTrade}>
+      <form onSubmit={handleDoTrade} className="row">
+        <div className="col-12 col-md-9">
           <div className="row">
             <div className="col-12 col-md-6">
-              <section>
-                <h2>Jogador 1</h2>
-
-                <Select
-                  options={pokemons}
-                  value={null}
-                  onChange={handlePlayerSelect1}
-                  id="search-player-1"
-                  placeholder="Ex.: bulbasaur, pikachu"
-                  noOptionsMessage={() => "Nenhum resultado encontrado"}
-                  isDisabled={pokemonsPlayer1.length === 6}
-                />
-                {pokemonsPlayer1.length === 6 && <small>Cada jogador pode adicionar apenas 6 pokémons.</small>}
-                <ul>
-                  {pokemonsPlayer1.map((item, index) => (
-                    <li key={index}>
-                      {item.name} <button type="button" onClick={() => handleRemovePokemon1(index)}>remover</button>
-                    </li>
-                  ))}
-                </ul>
-
-                <div>
-                  <p>Experiência base</p>
-                  <strong>{totalBaseExperiencePlayer1}</strong>
-                </div>
-              </section>
+              <PokemonSelector
+                pokemons={pokemons}
+                pokemonsOfPlayer={pokemonsPlayer1}
+                totalBaseExperiencePlayer={totalBaseExperiencePlayer1}
+                handlePokemonSelect={handlePlayerSelect1}
+                handleRemovePokemon={handleRemovePokemon1}
+              />
             </div>
             <div className="col-12 col-md-6">
-              <section>
-                <h2>Jogador 2</h2>
-
-                <Select
-                  options={pokemons}
-                  value={null}
-                  onChange={handlePlayerSelect2}
-                  id="search-player-1"
-                  placeholder="Ex.: bulbasaur, pikachu"
-                  noOptionsMessage={() => "Nenhum resultado encontrado"}
-                  isDisabled={pokemonsPlayer2.length === 6}
-                />
-                {pokemonsPlayer2.length === 6 && <small>Cada jogador pode adicionar apenas 6 pokémons.</small>}
-                <ul>
-                  {pokemonsPlayer2.map((item, index) => (
-                    <li key={index}>{item.name} <button type="button" onClick={() => handleRemovePokemon2(index)}>remover</button></li>
-                  ))}
-                </ul>
-
-                <div>
-                  <p>Experiência base</p>
-                  <strong>{totalBaseExperiencePlayer2}</strong>
-                </div>
-              </section>
+              <PokemonSelector
+                pokemons={pokemons}
+                pokemonsOfPlayer={pokemonsPlayer2}
+                totalBaseExperiencePlayer={totalBaseExperiencePlayer2}
+                handlePokemonSelect={handlePlayerSelect2}
+                handleRemovePokemon={handleRemovePokemon2}
+              />
             </div>
           </div>
-
-
-
-          <div>
-            <h3>Resumo da troca</h3>{pokemonsPlayer1.length === 0 || pokemonsPlayer2.length === 0 ? (
-              <p>Os jogadores precisam selecionar pokémons</p>
-            ) : (
-              <>
-                <p>{currentTradeIsFair ? 'Justa' : 'Injusta'}</p>
-                <button type="submit">
-                  Efetuar troca
-                </button>
-              </>
-            )}
+        </div>
+        <div className="col-12 col-md-3">
+          <div className={`card text-center card-body h-100 d-flex alert ${currentTradeIsFair ? 'alert-success' : 'alert-warning'}`}>
+            <div className="my-auto">
+              <p className="m-0">Resumo da troca</p>
+              {pokemonsPlayer1.length === 0 || pokemonsPlayer2.length === 0 ? (
+                <p>Os jogadores precisam selecionar pokémons</p>
+              ) : (
+                <>
+                  <h1 className="mb-4">
+                    {currentTradeIsFair
+                      ? <span className="text-success">Justa</span>
+                      : <span className="text-danger">Injusta</span>
+                    }
+                  </h1>
+                  <button type="submit" className="btn btn-lg btn-primary">
+                    Efetuar troca
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        </form>
+        </div>
+      </form>
 
-        <aside className="col-12 col-md-4">
-          <h3>Histórico</h3>
-          <ul>
-            {tradesFormatted.map(trade => (
-              <li>
-                Player 1 ({trade.total_player_1}) / Player 2 ({trade.total_player_2}) <br />
-                {trade.formatted_date} - {trade.is_fair ? 'Justa' : 'Injusta'}
-              </li>
-            ))}
-          </ul>
+      <div className="row">
+        <aside className="col-12 mt-4">
+          <div className="card card-body border-0 text-secondary">
+            <h3 className="text-center">Histórico</h3>
+            <ul>
+              {tradesFormatted.map(trade => (
+                <li>
+                  Player 1 ({trade.total_player_1}) / Player 2 ({trade.total_player_2}) - {trade.formatted_date} - {trade.is_fair ? 'Justa' : 'Injusta'}
+                </li>
+              ))}
+            </ul>
+          </div>
         </aside>
       </div>
 
