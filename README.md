@@ -32,4 +32,4 @@ Uma troca é considerada justa se a soma da experiência base dos pokémons não
 - Acesse a pasta do projeto e rode `npm install`
 - Aguarde a instalação dos pacotes
 - Rode `npm run dev`
-- Acesse [http://localhost:3000](http://localhost:**3000**)
+- Acesse [http://localhost:3000](http://localhost:3000)
