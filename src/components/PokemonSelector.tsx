@@ -1,7 +1,28 @@
 import React from 'react';
 import Select from 'react-select';
 
-const PokemonSelector: React.FC = ({ pokemons, handlePokemonSelect, isDisabled, pokemonsOfPlayer, handleRemovePokemon, totalBaseExperiencePlayer }) => {
+interface IPokemonPlayer {
+  name: string;
+  base_experience: number;
+  sprites: {
+    front_default: string;
+  }
+}
+
+interface IPokemonOption {
+  value: string;
+  label: string;
+}
+interface PokemonSelectorProps {
+  pokemons: IPokemonOption[];
+  isDisabled?: boolean;
+  pokemonsOfPlayer: IPokemonPlayer[];
+  totalBaseExperiencePlayer: number;
+  handlePokemonSelect: (IPokemonOption) => void;
+  handleRemovePokemon: (number) => void;
+}
+
+const PokemonSelector: React.FC<PokemonSelectorProps> = ({ pokemons, handlePokemonSelect, isDisabled, pokemonsOfPlayer, handleRemovePokemon, totalBaseExperiencePlayer }) => {
   return (
     <section className="card h-100">
       <div className="card-body">

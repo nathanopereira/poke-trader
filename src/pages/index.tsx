@@ -36,7 +36,7 @@ const tradeIsFair = (valuePlayer1: number, valuePlayer2: number): boolean => {
 }
 
 const Home: React.FC = () => {
-  const [pokemons, setPokemons] = useState([]);
+  const [pokemons, setPokemons] = useState<{value: string; label: string}[]>([]);
 
   const [pokemonsDetails, setPokemonsDetails] = useState({});
 
@@ -150,6 +150,8 @@ const Home: React.FC = () => {
   return (
     <main className="container-fluid" style={{ maxWidth: 1400 }}>
       <Head>
+        <link rel="shortcut icon" href="/favicon.ico"/>
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
         <title>Poke Trader | Nathan Souza</title>
       </Head>
       <div className="row">
@@ -236,7 +238,7 @@ const Home: React.FC = () => {
                   </td>
                   <td>{trade.total_player_1}</td>
                   <td>
-                    {trade.player1.map(item => (
+                    {trade.player2.map(item => (
                       <img className="img-thumbnail mr-1" src={item.sprites?.front_default} alt={item.name} title={item.name} width={40} />
                       ))}
                   </td>
