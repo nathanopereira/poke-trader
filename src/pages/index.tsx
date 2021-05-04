@@ -211,7 +211,7 @@ const Home: React.FC = () => {
           </div>
         </div>
         <div className="col-12 col-md-3">
-          <div className={`card text-center card-body h-100 d-flex alert ${
+          <div className={`card px-3 text-center card-body h-100 d-flex alert ${
             (pokemonsPlayer1.length > 0 && pokemonsPlayer2.length > 0) ? currentTradeIsFair ? 'alert-success' : 'alert-warning' : 'alert-secondary'
             }`}>
             <div className="my-auto">
@@ -236,7 +236,7 @@ const Home: React.FC = () => {
               )}
               <div className="mt-3">
                 <small className="d-block"><strong>Troca Justa</strong>: até 10 pontos de diferença.</small>
-                <small className="d-block"><strong>Troca Injusta</strong>: mais que 10 pontos de diferença.</small>
+                <small className="d-block"><strong>Troca Injusta</strong>: mais de 10 pontos de diferença.</small>
               </div>
             </div>
           </div>
