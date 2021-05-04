@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 
-const PokemonSelector: React.FC = ({ pokemons, handlePokemonSelect, pokemonsOfPlayer, handleRemovePokemon, totalBaseExperiencePlayer }) => {
+const PokemonSelector: React.FC = ({ pokemons, handlePokemonSelect, isDisabled, pokemonsOfPlayer, handleRemovePokemon, totalBaseExperiencePlayer }) => {
   return (
     <section className="card h-100">
       <div className="card-body">
@@ -15,7 +15,7 @@ const PokemonSelector: React.FC = ({ pokemons, handlePokemonSelect, pokemonsOfPl
           id="search-player-1"
           placeholder="Ex.: bulbasaur, pikachu"
           noOptionsMessage={() => "Nenhum resultado encontrado"}
-          isDisabled={pokemonsOfPlayer.length === 6}
+          isDisabled={pokemonsOfPlayer.length === 6 || isDisabled}
         />
 
         {pokemonsOfPlayer.length === 6 && <small>Cada jogador pode adicionar apenas 6 pokémons.</small>}
@@ -32,7 +32,7 @@ const PokemonSelector: React.FC = ({ pokemons, handlePokemonSelect, pokemonsOfPl
                 <div>
                   <img src={item.sprites.front_default} alt={item.name} height={40} />
                   {item.name}
-                  <button className="border-0 text-danger bg-transparent" type="button" onClick={() => handleRemovePokemon(index)}><small>remover</small></button>
+                  <button disabled={isDisabled} className="border-0 text-danger bg-transparent" type="button" onClick={() => handleRemovePokemon(index)}><small>remover</small></button>
                 </div>
                 <div className="h4 m-0">
                   {item.base_experience}
