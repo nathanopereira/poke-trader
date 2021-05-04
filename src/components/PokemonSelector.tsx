@@ -14,6 +14,7 @@ interface IPokemonOption {
   label: string;
 }
 interface PokemonSelectorProps {
+  title: string;
   pokemons: IPokemonOption[];
   isDisabled?: boolean;
   pokemonsOfPlayer: IPokemonPlayer[];
@@ -22,11 +23,11 @@ interface PokemonSelectorProps {
   handleRemovePokemon: (number) => void;
 }
 
-const PokemonSelector: React.FC<PokemonSelectorProps> = ({ pokemons, handlePokemonSelect, isDisabled, pokemonsOfPlayer, handleRemovePokemon, totalBaseExperiencePlayer }) => {
+const PokemonSelector: React.FC<PokemonSelectorProps> = ({ pokemons, handlePokemonSelect, title, isDisabled, pokemonsOfPlayer, handleRemovePokemon, totalBaseExperiencePlayer }) => {
   return (
     <section className="card h-100">
       <div className="card-body">
-        <h2 className="mb-3">Jogador 1</h2>
+        <h4 className="mb-3">{title}</h4>
 
         <label htmlFor="search-player-1">Selecionar pokémons</label>
         <Select

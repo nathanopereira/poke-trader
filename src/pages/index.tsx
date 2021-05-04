@@ -44,8 +44,8 @@ const Home: React.FC = () => {
   const [pokemonsPlayer2, setPokemonsPlayer2] = useState([]);
 
   const [trades, setTrades] = useState<ITrade[]>([]);
-
   const [isSavingTrade, setIsSavingTrade] = useState(false)
+  const [isLoadingTrades, setIsLoadingTrades] = useState(false)
 
   const fetchPokemons = useCallback(
     async () => {
@@ -56,8 +56,10 @@ const Home: React.FC = () => {
   )
 
   const fetchTrades = useCallback(async () => {
+    setIsLoadingTrades(true)
     const { data } = await axios.get('/api/trades')
     setTrades(data)
+    setIsLoadingTrades(false)
   }, [])
 
   const fetchPokemon = useCallback(async (url) => {
@@ -97,6 +99,10 @@ const Home: React.FC = () => {
   const totalBaseExperiencePlayer2 = useMemo(() => {
     return pokemonsPlayer2.reduce((total, current) => total + current.base_experience, 0)
   }, [pokemonsPlayer2])
+
+  const differenceTotalBaseExperience = useMemo(() => {
+    return Math.abs(totalBaseExperiencePlayer1 - totalBaseExperiencePlayer2)
+  },[totalBaseExperiencePlayer1, totalBaseExperiencePlayer2])
 
   const currentTradeIsFair = useMemo(() => {
     return tradeIsFair(totalBaseExperiencePlayer1, totalBaseExperiencePlayer2)
@@ -155,9 +161,25 @@ const Home: React.FC = () => {
         <title>Poke Trader | Nathan Souza</title>
       </Head>
       <div className="row">
-        <div className="col-12 mt-3 mb-2 text-center">
-          <h1>Poke Trader</h1>
-          <p>Calcule se uma troca de pokémons é justa ou não</p>
+        <div className="col-12 col-md-8 mx-auto my-4 text-center mb-3">
+          <h1 className="m-0">Poke Trader</h1>
+          <p>Poke Trader é uma calculadora de trocas de pokémons que permite calcular se uma troca entre jogadores é justa ou não a partir da soma e comparação da experiência base (base_experience) dos pokémons dos jogadores. Também permite armazenar e consultar o histórico de trocas calculadas.</p>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-12 col-md-9">
+          <div className="row">
+            <div className="col-12 col-md-6 text-center my-3">
+              1. Selecione os pokémons que o Jogador 1 deseja trocar.
+            </div>
+            <div className="col-12 col-md-6 text-center my-3">
+              2. Selecione os pokémons que o Jogador 2 deseja trocar.
+            </div>
+          </div>
+        </div>
+        <div className="col-12 col-md-3 text-center my-3">
+          3. Confira se a troca é justa ou não e salve.
         </div>
       </div>
 
@@ -166,6 +188,7 @@ const Home: React.FC = () => {
           <div className="row">
             <div className="col-12 col-md-6">
               <PokemonSelector
+                title="Jogador 1"
                 pokemons={pokemons}
                 isDisabled={isSavingTrade}
                 pokemonsOfPlayer={pokemonsPlayer1}
@@ -176,6 +199,7 @@ const Home: React.FC = () => {
             </div>
             <div className="col-12 col-md-6">
               <PokemonSelector
+                title="Jogador 2"
                 pokemons={pokemons}
                 isDisabled={isSavingTrade}
                 pokemonsOfPlayer={pokemonsPlayer2}
@@ -191,12 +215,15 @@ const Home: React.FC = () => {
             (pokemonsPlayer1.length > 0 && pokemonsPlayer2.length > 0) ? currentTradeIsFair ? 'alert-success' : 'alert-warning' : 'alert-secondary'
             }`}>
             <div className="my-auto">
-              <p className="m-0">Resumo da troca</p>
+              <p className="m-0 font-weight-bold">Resumo da troca</p>
               {pokemonsPlayer1.length === 0 || pokemonsPlayer2.length === 0 ? (
-                <strong>Selecione pokémons para ver o resumo da troca</strong>
+                <span>Selecione pokémons para ver o resumo da troca</span>
               ) : (
                 <>
-                  <h1 className="mb-4">
+                  <small className="d-block p-2">
+                    A diferença entre o total da experiência base é de <strong>{differenceTotalBaseExperience} pontos</strong>
+                  </small>
+                  <h1 className="mb-3">
                     {currentTradeIsFair
                       ? <span className="text-success">Justa</span>
                       : <span className="text-danger">Injusta</span>
@@ -207,6 +234,10 @@ const Home: React.FC = () => {
                   </button>
                 </>
               )}
+              <div className="mt-3">
+                <small className="d-block"><strong>Troca Justa</strong>: até 10 pontos de diferença.</small>
+                <small className="d-block"><strong>Troca Injusta</strong>: mais 10 pontos de diferença.</small>
+              </div>
             </div>
           </div>
         </div>
@@ -216,42 +247,48 @@ const Home: React.FC = () => {
         <aside className="col-12 col-md-9 mx-auto mt-4">
           <div className="card card-body border-0 text-secondary">
             <h3 className="text-center">Histórico</h3>
-            <div className="table-responsive">
-            <table className="table table-sm">
-              <thead>
-                <tr>
-                  <th>Data</th>
-                  <th colSpan={2}>Jogador 1</th>
-                  <th colSpan={2}>Jogador 2</th>
-                  <th>Resumo da troca</th>
-                </tr>
-              </thead>
-              {tradesFormatted.map(trade => (
-                <tr>
-                  <td>
-                  {trade.formatted_date}
-                  </td>
-                  <td>
-                    {trade.player1.map(item => (
-                      <img className="img-thumbnail mr-1" src={item.sprites?.front_default} alt={item.name} title={item.name} width={40} />
-                      ))}
-                  </td>
-                  <td>{trade.total_player_1}</td>
-                  <td>
-                    {trade.player2.map(item => (
-                      <img className="img-thumbnail mr-1" src={item.sprites?.front_default} alt={item.name} title={item.name} width={40} />
-                      ))}
-                  </td>
-                  <td>{trade.total_player_2}</td>
-                  <td>
-                    {trade.is_fair ? <span className="text-success">Justa</span> : <span className="text-danger">Injusta</span>}
-                  </td>
-                </tr>
-              ))}
-            </table>
-            </div>
+            {isLoadingTrades && <p className="my-3 text-center">Carregando...</p>}
+            {!isLoadingTrades && (
+              <div className="table-responsive">
+                <table className="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th colSpan={2}>Jogador 1</th>
+                      <th colSpan={2}>Jogador 2</th>
+                      <th>Resumo da troca</th>
+                    </tr>
+                  </thead>
+                  {tradesFormatted.map(trade => (
+                    <tr>
+                      <td>
+                      {trade.formatted_date}
+                      </td>
+                      <td>
+                        {trade.player1.map(item => (
+                          <img className="img-thumbnail mr-1" src={item.sprites?.front_default} alt={item.name} title={item.name} width={40} />
+                          ))}
+                      </td>
+                      <td>{trade.total_player_1}</td>
+                      <td>
+                        {trade.player2.map(item => (
+                          <img className="img-thumbnail mr-1" src={item.sprites?.front_default} alt={item.name} title={item.name} width={40} />
+                          ))}
+                      </td>
+                      <td>{trade.total_player_2}</td>
+                      <td>
+                        {trade.is_fair ? <span className="text-success">Justa</span> : <span className="text-danger">Injusta</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </table>
+              </div>
+            )}
           </div>
         </aside>
+        <div className="col-12 text-center mt-3">
+          <small>Desenvolvido por <a href="https://github.com/nathanopereira/poke-trader" target="_blank">@nathanopereira</a></small>
+        </div>
       </div>
 
       <ToastContainer />
