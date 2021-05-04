@@ -236,7 +236,7 @@ const Home: React.FC = () => {
               )}
               <div className="mt-3">
                 <small className="d-block"><strong>Troca Justa</strong>: até 10 pontos de diferença.</small>
-                <small className="d-block"><strong>Troca Injusta</strong>: mais 10 pontos de diferença.</small>
+                <small className="d-block"><strong>Troca Injusta</strong>: mais que 10 pontos de diferença.</small>
               </div>
             </div>
           </div>
