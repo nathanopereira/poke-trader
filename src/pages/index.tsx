@@ -1,21 +1,22 @@
 import axios from 'axios';
 import React, { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import Select from 'react-select';
 import { format, parseISO } from 'date-fns';
 import Head from 'next/head';
+import { ToastContainer, toast } from 'react-toastify';
 
 import PokemonSelector from '@/components/PokemonSelector'
 
+interface PokemonPlayer {
+  name: string;
+  base_experience: number;
+  sprites: {
+    front_default: string;
+  }
+}
 interface ITrade {
   _id: string;
-  player1: [{
-    name: string,
-    base_experience: number
-  }],
-  player2: [{
-    name: string,
-    base_experience: number
-  }],
+  player1: PokemonPlayer[],
+  player2: PokemonPlayer[],
   created_at: string;
 }
 
@@ -44,6 +45,8 @@ const Home: React.FC = () => {
 
   const [trades, setTrades] = useState<ITrade[]>([]);
 
+  const [isSavingTrade, setIsSavingTrade] = useState(false)
+
   const fetchPokemons = useCallback(
     async () => {
       const { data } = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=2000')
@@ -68,15 +71,15 @@ const Home: React.FC = () => {
   }, [pokemonsDetails])
 
   const handlePlayerSelect2 = useCallback(async (option) => {
-    const pokemon = await fetchPokemon(option.value)
+    const {name, base_experience, sprites} = await fetchPokemon(option.value)
 
-    setPokemonsPlayer2(prevState => [...prevState, pokemon])
+    setPokemonsPlayer2(prevState => [...prevState, {name, base_experience, sprites, url: option.value}])
   }, [pokemonsDetails])
 
   const handlePlayerSelect1 = useCallback(async (option) => {
-    const pokemon = await fetchPokemon(option.value)
+    const {name, base_experience, sprites} = await fetchPokemon(option.value)
 
-    setPokemonsPlayer1(prevState => [...prevState, pokemon])
+    setPokemonsPlayer1(prevState => [...prevState, {name, base_experience, sprites, url: option.value}])
   }, [pokemonsDetails])
 
   const handleRemovePokemon1 = useCallback((indexRemove) => {
@@ -101,16 +104,26 @@ const Home: React.FC = () => {
 
   const handleDoTrade = useCallback(async (event: FormEvent) => {
     event.preventDefault();
-    // save trade
-    const { data } = await axios.post('/api/trades', {
-      player1: pokemonsPlayer1,
-      player2: pokemonsPlayer2
-    })
-    // update history
-    setTrades([...trades, data])
-    // clear lists
-    setPokemonsPlayer1([]);
-    setPokemonsPlayer2([])
+    setIsSavingTrade(true)
+    try{
+      // save trade
+      const { data } = await axios.post('/api/trades', {
+        player1: pokemonsPlayer1,
+        player2: pokemonsPlayer2
+      })
+      // update history
+      setTrades([...trades, {...data, recent: true}])
+      // clear lists
+      setPokemonsPlayer1([]);
+      setPokemonsPlayer2([]);
+
+      toast.success("Troca salva com sucesso!")
+    }catch(err){
+      console.error(err)
+      toast.error("Erro ao salvar! Por favor tente novamente")
+    }finally{
+      setIsSavingTrade(false)
+    }
   }, [trades, pokemonsPlayer1, pokemonsPlayer2])
 
   const tradesFormatted = useMemo(() => {
@@ -119,11 +132,13 @@ const Home: React.FC = () => {
       const totalPlayer2 = trade.player2.reduce((total, curr) => total + curr.base_experience, 0)
       return {
         ...trade,
-        formatted_date: format(parseISO(trade.created_at), 'dd/MM/yyyy hh:mm'),
+        formatted_date: format(parseISO(trade.created_at), 'dd/MM/yyyy HH:mm'),
         is_fair: tradeIsFair(totalPlayer1, totalPlayer2),
         total_player_1: totalPlayer1,
         total_player_2: totalPlayer2,
       }
+    }).sort((a, b) => {
+      return parseISO(b.created_at).getTime() - parseISO(a.created_at).getTime()
     })
   }, [trades])
 
@@ -150,15 +165,17 @@ const Home: React.FC = () => {
             <div className="col-12 col-md-6">
               <PokemonSelector
                 pokemons={pokemons}
+                isDisabled={isSavingTrade}
                 pokemonsOfPlayer={pokemonsPlayer1}
                 totalBaseExperiencePlayer={totalBaseExperiencePlayer1}
                 handlePokemonSelect={handlePlayerSelect1}
                 handleRemovePokemon={handleRemovePokemon1}
-              />
+                />
             </div>
             <div className="col-12 col-md-6">
               <PokemonSelector
                 pokemons={pokemons}
+                isDisabled={isSavingTrade}
                 pokemonsOfPlayer={pokemonsPlayer2}
                 totalBaseExperiencePlayer={totalBaseExperiencePlayer2}
                 handlePokemonSelect={handlePlayerSelect2}
@@ -183,8 +200,8 @@ const Home: React.FC = () => {
                       : <span className="text-danger">Injusta</span>
                     }
                   </h1>
-                  <button type="submit" className="btn btn-lg btn-primary">
-                    Efetuar troca
+                  <button type="submit" className="btn btn-lg btn-primary" disabled={isSavingTrade}>
+                    {isSavingTrade ? 'Salvando...' : 'Salvar troca'}
                   </button>
                 </>
               )}
@@ -194,20 +211,48 @@ const Home: React.FC = () => {
       </form>
 
       <div className="row">
-        <aside className="col-12 mt-4">
+        <aside className="col-12 col-md-9 mx-auto mt-4">
           <div className="card card-body border-0 text-secondary">
             <h3 className="text-center">Histórico</h3>
-            <ul>
+            <div className="table-responsive">
+            <table className="table table-sm">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th colSpan={2}>Jogador 1</th>
+                  <th colSpan={2}>Jogador 2</th>
+                  <th>Resumo da troca</th>
+                </tr>
+              </thead>
               {tradesFormatted.map(trade => (
-                <li>
-                  Player 1 ({trade.total_player_1}) / Player 2 ({trade.total_player_2}) - {trade.formatted_date} - {trade.is_fair ? 'Justa' : 'Injusta'}
-                </li>
+                <tr>
+                  <td>
+                  {trade.formatted_date}
+                  </td>
+                  <td>
+                    {trade.player1.map(item => (
+                      <img className="img-thumbnail mr-1" src={item.sprites?.front_default} alt={item.name} title={item.name} width={40} />
+                      ))}
+                  </td>
+                  <td>{trade.total_player_1}</td>
+                  <td>
+                    {trade.player1.map(item => (
+                      <img className="img-thumbnail mr-1" src={item.sprites?.front_default} alt={item.name} title={item.name} width={40} />
+                      ))}
+                  </td>
+                  <td>{trade.total_player_2}</td>
+                  <td>
+                    {trade.is_fair ? <span className="text-success">Justa</span> : <span className="text-danger">Injusta</span>}
+                  </td>
+                </tr>
               ))}
-            </ul>
+            </table>
+            </div>
           </div>
         </aside>
       </div>
 
+      <ToastContainer />
     </main>
   )
 }
