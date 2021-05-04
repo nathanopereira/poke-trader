@@ -3,9 +3,3 @@
 body{
   background: #f8fbff;
 }
-
-li.pokemon-item{
-  & + .pokemon-item{
-    border-top: 1px dashed #ccc;
-  }
-}

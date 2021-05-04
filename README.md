@@ -10,7 +10,7 @@
 - Permitir persistir e visualizar o histórico de trocas registradas junto com seus dados
 relevantes
   - Armazenar trocas (data, pokemons, justa/não justa)
-  - Listar trocas (histórico)
+  - Listar trocas
 
 ## Rodar o projeto
 
