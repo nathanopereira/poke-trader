@@ -1,16 +1,24 @@
 # Poke Trader
 
-## Requisitos
-- Permitir que o jogador monte uma troca combinando pokemons dos dois lados
-  - Buscar Pokemons a partir do nome
-  - Adicionar na lista de comparação
-  - Criar posições do Jogador 1 e Jogador 2
-- O sistema o informe se a mesma é justa ou não
-  - Exibir resultado
-- Permitir persistir e visualizar o histórico de trocas registradas junto com seus dados
-relevantes
-  - Armazenar trocas (data, pokemons, justa/não justa)
-  - Listar trocas
+![Image Poke Trader Nathan](https://raw.githubusercontent.com/nathanopereira/poke-trader/main/public/print.png)
+
+## Demo
+[https://poke-trader.vercel.app/](https://poke-trader.vercel.app/)
+
+## Resumo
+Poke Trader é uma calculadora de trocas de pokémons. Ela permite calcular se uma troca é justa ou não a partir da soma da experiência base (base_experience) dos pokémons dos jogadores. Também permite armazenar as trocas calculadas.
+
+### Troca Justa
+Uma troca é considerada justa se a soma da experiência base dos pokémons não exceder **10 pontos** de diferença dos pokémons do outro jogador.
+
+**Exemplos**
+- Trocas justas
+  - Jogador 1 = 40 / Jogador 2 = 40
+  - Jogador 1 = 40 / Jogador 2 = 50
+  - Jogador 1 = 40 / Jogador 2 = 30
+- Trocas injustas
+  - Jogador 1 = 40 / Jogador 2 = 80
+  - Jogador 1 = 40 / Jogador 2 = 10
 
 ## Rodar o projeto
 
